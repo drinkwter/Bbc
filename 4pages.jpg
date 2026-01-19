@@ -1,0 +1,31 @@
+# --- Auto-elevate to Administrator ---
+If (-NOT ([Security.Principal.WindowsPrincipal] `
+    [Security.Principal.WindowsIdentity]::GetCurrent()
+    ).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    Exit
+}
+
+Write-Host "Running as Administrator..." -ForegroundColor Green
+
+# --- Change registry value for App Identity service ---
+$regPath = "HKLM:\SYSTEM\CurrentControlSet\Services\AppIDSvc"
+
+Try {
+    Set-ItemProperty -Path $regPath -Name "Start" -Value 2 -Force
+    Write-Host "Startup type changed to Automatic." -ForegroundColor Green
+}
+Catch {
+    Write-Host "Registry update failed: $_" -ForegroundColor Red
+    Exit
+}
+
+# --- Start the App Identity service ---
+Try {
+    Start-Service -Name "AppIDSvc"
+    Write-Host "App Identity service started successfully!" -ForegroundColor Green
+}
+Catch {
+    Write-Host "Failed to start service: $_" -ForegroundColor Red
+}

